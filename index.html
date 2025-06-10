@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Painel Fila - SUS</title>
+  </head>
+  <body>
+    <header>
+      <div class="logo"></div>
+      <p>Painel de Atendimento</p>
+      <p class="date"></p>
+    </header>
+
+    <div class="container">
+      <div class="dropdown">
+        <label for="opcoes">Tipo de atendimento:</label>
+        <select id="opcoes">
+          <option value="CONSULTA_MEDICA">CONSULTA MÉDICA</option>
+          <option value="TRIAGEM">TRIAGEM</option>
+          <option value="ODONTOLOGIA">ODONTOLOGIA</option>
+          <option value="ACOMPANHAMENTO_DOENCAS_CRONICAS">
+            ACOMPANHAMENTO DE DOENÇAS CRÔNICAS
+          </option>
+          <option value="ADMINISTRATIVO">ADMINISTRATIVO</option>
+        </select>
+      </div>
+
+      <div class="details">
+        <div class="item1"></div>
+        <div class="item2">
+          <div class="left">
+            <div class="l-1">
+              <p>SALA / CONSULTÓRIO</p>
+              <p class="sala"></p>
+            </div>
+            <div class="l-2">
+              <p>PRÓXIMOS DA FILA</p>
+              <ul>
+                <li></li>
+              </ul>
+            </div>
+          </div>
+          <div class="right">
+            <p class="titulo">PACIENTE</p>
+            <div class="info">
+              <p class="paciente-nome"></p>
+              <p class="paciente-cpf"></p>
+                <p class="tipoFila"></p>
+              <p class="dataCheckin"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script defer type="module">
+      import { getFilaIntercalada } from "./api.js";
+
+      function atualizarRelogio() {
+        const agora = new Date();
+        const headerDate = document.querySelector(".date");
+        headerDate.textContent = `${agora.toLocaleString()}`;
+      }
+
+      setInterval(atualizarRelogio, 1000);
+      atualizarRelogio();
+
+      const opcoes = document.getElementById("opcoes");
+      const p_tipoAtendimento = document.querySelector(".item1");
+      const p_sala = document.querySelector(".sala");
+      const p_ulFila = document.querySelector(".l-2 ul");
+      const p_pacienteNome = document.querySelector(".paciente-nome");
+      const p_tipoFila = document.querySelector(".tipoFila");
+      const p_pacienteCpf = document.querySelector(".paciente-cpf");
+      const p_dataCheckin = document.querySelector(".dataCheckin");
+
+      let tipo_atendimento = opcoes.value;
+
+      p_tipoAtendimento.innerHTML = `<p>${opcoes.value}</p>`;
+
+      async function renderizarFila(tipo_atendimento) {
+        try {
+          const fila = await getFilaIntercalada(tipo_atendimento);
+
+          if (fila.length !== 0) {
+            console.log(fila);
+            const atendimentoAtual = fila[0];
+
+            p_pacienteNome.innerHTML = `<p>${atendimentoAtual.paciente.nome}</p>`;
+            p_pacienteCpf.innerHTML = `<p>CPF: ${atendimentoAtual.paciente.cpf}</p>`;
+            p_tipoFila.innerHTML = `<p>FILA ${atendimentoAtual.tipoFila}</p>`;
+            p_dataCheckin.innerHTML = `<p>Data de chegada: ${atendimentoAtual.dataCheckin}</p>`;
+
+            p_ulFila.innerHTML = "";
+
+            for (let i = 1; i < fila.length; i++) {
+              const li = document.createElement("li");
+              li.innerHTML = `${fila[i].paciente.nome} (CPF: ${fila[i].paciente.cpf})</br>Data de chegada: ${fila[i].dataCheckin}</br>FILA ${fila[i].tipoFila}`
+              p_ulFila.appendChild(li);
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao obter a fila:", error);
+        }
+      }
+
+      renderizarFila(tipo_atendimento);
+      opcoes.addEventListener("change", () => {
+        p_tipoAtendimento.innerHTML = `<p>${opcoes.value}</p>`;
+
+        tipo_atendimento = opcoes.value;
+
+        renderizarFila(tipo_atendimento);
+      });
+    </script>
+  </body>
+</html>
