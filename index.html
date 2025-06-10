@@ -85,13 +85,14 @@
           const fila = await getFilaIntercalada(tipo_atendimento);
 
           if (fila.length !== 0) {
-            console.log(fila);
             const atendimentoAtual = fila[0];
 
             p_pacienteNome.innerHTML = `<p>${atendimentoAtual.paciente.nome}</p>`;
             p_pacienteCpf.innerHTML = `<p>CPF: ${atendimentoAtual.paciente.cpf}</p>`;
             p_tipoFila.innerHTML = `<p>FILA ${atendimentoAtual.tipoFila}</p>`;
             p_dataCheckin.innerHTML = `<p>Data de chegada: ${atendimentoAtual.dataCheckin}</p>`;
+            let sala = atendimentoAtual.sala ? atendimentoAtual.sala : "Sala Não atribuída";
+            p_sala.innerHTML = `<p>${sala}</p>`;
 
             p_ulFila.innerHTML = "";
 
