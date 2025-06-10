@@ -3,7 +3,9 @@
     --grey: #E0E0E0;
     --light-grey: #F5F5F5;
     --text-color: #333;
-    --header-bg: #BEE3DB;
+    --header-bg: #7AADA2;
+    --strong-yellow: #FFCF00;
+    --light-yellow: #FFE36B;
 }
 
 * {
@@ -27,12 +29,13 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: var(--white);
 }
 
 .logo {
     width: 100px;
     height: 100%;
-    background-image: url('./assets/imgs/logo.png');
+    background-image: url('./assets/imgs/logo-amarela.png');
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
